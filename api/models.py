@@ -27,7 +27,8 @@ class FileModel(models.Model):
                                   default="",
                                   null=True,
                                   blank=True)
-    sources = models.TextField()
+    imports = models.TextField()
+    informations = models.TextField()
     file_type = models.TextField()
 
 class LootTypeModel(models.Model):

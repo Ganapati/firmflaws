@@ -141,6 +141,7 @@ def get_file(request, hash):
                     "hash": file.hash,
                     "type": file.file_type,
                     "filename": file.filename,
+                    "informations": file.informations,
                     "filesize": file.filesize}
         if file.graph_file != "":
             response["graph"] = True

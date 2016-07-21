@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from api.models import FirmwareModel, FileModel, LootModel, LootTypeModel
 from lib.extract import Extractor
 from django.conf import settings
+from lib.parseELF import insecure_imports, is_elf, binary_informations
 import magic
 import re
 import os
@@ -91,7 +92,6 @@ class Command(BaseCommand):
         for type, values in loots_refs.items():
             try:
                 loot_type = LootTypeModel.objects.get(name=type)
-                loot_type.save()
             except LootTypeModel.DoesNotExist:
                 loot_type = LootTypeModel()
                 loot_type.name = type
@@ -103,6 +103,10 @@ class Command(BaseCommand):
                     loot.type = loot_type
                     loot.info = "find %s in file" % value
                     loot.save()
+
+        if is_elf(file):
+            insecure_imports(file)
+            binary_informations(file)
 
     def set_status(self, status):
         self.firmware.status = status

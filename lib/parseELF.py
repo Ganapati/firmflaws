@@ -1,5 +1,5 @@
 from django.conf import settings
-from api.models import FileModel
+from api.models import FileModel, LootModel, LootTypeModel
 import r2pipe
 import os
 import pydot
@@ -14,7 +14,6 @@ def parse_elf(workspace, file):
     r2.cmd("aa")
     r2.cmd("afl")
     result = r2.cmd("ag $$")
-    
     output_dir = os.path.join(workspace, "graphs")
     if not os.path.exists(output_dir):
             os.makedirs(output_dir)
@@ -24,4 +23,32 @@ def parse_elf(workspace, file):
     graph[0].write_png(out_file)
     file.graph_file = out_file
     file.save()
-    print("New graph created")
+    print("%s parsed" % file.filepath)
+
+def insecure_imports(file):
+    r2 = r2pipe.open(file.filepath)
+    imports = ','.join([_[_.index("name=")+5:] for _ in r2.cmd("ii").split("\n") if "name=" in _])
+    file.imports = imports
+    file.save()
+    imports = imports.split(",")
+    type = "potentially insecure function"
+    for insecure_function in settings.INSECURE_FUNCTIONS:
+        if insecure_function in imports:
+            try:
+                loot_type = LootTypeModel.objects.get(name=type)
+            except LootTypeModel.DoesNotExist:
+                loot_type = LootTypeModel()
+                loot_type.name = type
+                loot_type.save()
+   
+            loot = LootModel()
+            loot.file = file
+            loot.type = loot_type
+            loot.info = "find %s in file" % insecure_function
+            loot.save()
+
+def binary_informations(file):
+    r2 = r2pipe.open(file.filepath)
+    informations = r2.cmd("i")
+    file.informations = informations
+    file.save()
