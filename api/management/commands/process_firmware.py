@@ -35,7 +35,6 @@ class Command(BaseCommand):
                 if not os.path.isfile(full_path):
                     continue
                 path = full_path.replace(self.extracted_path, "")
-                print("Processing %s" % path)
                 content = ""
                 hash = ""
                 with open(full_path, "rb") as fd:
@@ -46,7 +45,6 @@ class Command(BaseCommand):
                     file_obj = FileModel.objects.get(hash=hash)
                     file_obj.firmware.add(self.firmware)
                     file_obj.save()
-                    print("repost")
                 except FileModel.DoesNotExist:
                     file_obj = FileModel()
                     file_obj.filepath = os.path.join(root, file)
@@ -62,7 +60,6 @@ class Command(BaseCommand):
                         file_obj.file_type = "unknown"
                     file_obj.save()
                     self.find_loots(file_obj)
-                    print("new")
 
         print("Files registered")
 

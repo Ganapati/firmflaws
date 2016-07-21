@@ -48,8 +48,11 @@ class Extractor():
                 try:
                     tar.extract(file_, path=path)
                 except IOError:
-                    os.remove(path + file_.name)
-                    tar.extract(file_, path)
+                    try:
+                        os.remove(path + file_.name)
+                        tar.extract(file_, path)
+                    except:
+                        pass
                 finally:
                     try:
                         os.chmod(path + file_.name, file_.mode)

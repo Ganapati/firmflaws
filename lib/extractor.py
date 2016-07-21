@@ -255,7 +255,8 @@ class ExtractionItem(object):
         """
         Prints output string with appropriate depth indentation.
         """
-        print(("\t" * self.depth + fmt))
+        #print(("\t" * self.depth + fmt))
+        pass
 
     def generate_tag(self):
         """
@@ -439,22 +440,22 @@ class ExtractionItem(object):
         # First, use MIME-type to exclude large categories of files
         filetype = Extractor.magic(self.item.encode("utf-8", "surrogateescape"),
                                    mime=True)
-        if any(s in filetype for s in [str.encode("application/x-executable"),
-                                       str.encode("application/x-dosexec"),
-                                       str.encode("application/x-object"),
-                                       str.encode("application/pdf"),
-                                       str.encode("application/msword"),
-                                       str.encode("image/"),
-                                       str.encode("text/",
-                                       str.encode("video/"])):
+        if any(s in filetype for s in ["application/x-executable",
+                                       "application/x-dosexec",
+                                       "application/x-object",
+                                       "application/pdf",
+                                       "application/msword",
+                                       "image/",
+                                       "text/",
+                                       "video/"]):
             self.printf(">> Skipping: %s..." % filetype)
             return True
 
         # Next, check for specific file types that have MIME-type
         # 'application/octet-stream'
         filetype = Extractor.magic(self.item.encode("utf-8", "surrogateescape"))
-        if any(s in filetype for s in [b"executable", b"universal binary",
-                                       b"relocatable", b"bytecode", b"applet"]):
+        if any(s in filetype for s in ["executable", "universal binary",
+                                       "relocatable", "bytecode", "applet"]):
             self.printf(">> Skipping: %s..." % filetype)
             return True
 
