@@ -4,7 +4,7 @@ from django.http import JsonResponse, HttpResponse
 from django.db import IntegrityError
 from django.conf import settings
 from django.db.models import Q
-from api.models import FirmwareModel, FileModel, LootModel, BrandModel
+from api.models import FirmwareModel, FileModel, LootModel, BrandModel, LootTypeModel
 from lib.parseELF import is_elf, parse_elf
 import hashlib
 import string
@@ -186,9 +186,8 @@ def get_stats(request):
     """
     try:
         response = {"total": LootModel.objects.all().count()}
-        loots_types = settings.LOOTS_FILENAMES.copy()
-        loots_types.update(settings.LOOTS_GREP)
-        for type in loots_types.keys():
+        loots_types = [_.name for _ in LootTypeModel.objects.all()]
+        for type in loots_types:
             result = LootModel.objects.filter(type__name=type).count()
             response[type] = result
 
