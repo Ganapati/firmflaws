@@ -135,7 +135,7 @@ def get_file(request, hash):
 
         loots = []
         for loot in file.loots.all():
-            loots.append({"type": loot.type.name})
+            loots.append({"type": loot.type.name, "info": loot.info})
 
         response = {"loots": loots,
                     "hash": file.hash,
