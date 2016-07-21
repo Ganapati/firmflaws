@@ -106,7 +106,9 @@ def get_file(request, hash):
     """
     try:
         file = FileModel.objects.get(hash=hash)
-
+        content = ""
+        with open(file.filepath, "rb") as fd:
+            content = fd.read()
         # Direct download
         if 'raw' in request.GET.keys():
             content = ""
@@ -148,6 +150,12 @@ def get_file(request, hash):
                                                                     "")
                 parse_elf(workspace, file)
                 response["graph"] = True
+
+        if "ASCII text" in file.file_type:
+            content = ""
+            with open(file.filepath, "r") as fd:
+                content = fd.read()
+            response["content"] = content
 
         return JsonResponse(response)
     except FileModel.DoesNotExist:
