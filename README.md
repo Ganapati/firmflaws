@@ -47,3 +47,13 @@ Search firmwares for given keyword
 ## Notes :
 process_firmware get ONE firmware with status == "waiting" (for future queue management)
 Run it every time a firmware is uploaded (for the moment)
+
+## Dependencies
+ - Radare2 from github : https://github.com/radare/radare2.git
+ - Binwalk from github : https://github.com/devttys0/binwalk
+ - graphviz
+ - pydot
+ - Django
+ - r2pipe
+ - python-magic
+ - squashfs-tools
