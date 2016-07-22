@@ -6,8 +6,10 @@ from django.conf import settings
 from django.db.models import Q
 from api.models import FirmwareModel, FileModel, LootModel, BrandModel, LootTypeModel
 from lib.parseELF import is_elf, parse_elf
+from lib.util import parseFilesToHierarchy
 import hashlib
 import string
+import json
 import os
 
 @csrf_exempt
@@ -91,6 +93,9 @@ def get_firmware(request, hash):
             result = LootModel.objects.filter(type__name=type, file__firmware=firmware).count()
             loots[type] = result
 
+        #maybe let's keep this in db?
+        mytree = parseFilesToHierarchy(files)
+
         return JsonResponse({"name": firmware.name,
                              "hash": firmware.hash,
                              "model": firmware.model,
@@ -99,7 +104,7 @@ def get_firmware(request, hash):
                              "loots": loots,
                              "filesize": firmware.filesize,
                              "brand": firmware.brand.name,
-                             "files": files,
+                             "hierarchy": mytree,
                              "description": firmware.description})
 
     except FirmwareModel.DoesNotExist:
