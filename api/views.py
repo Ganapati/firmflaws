@@ -85,11 +85,18 @@ def get_firmware(request, hash):
                           "hash": file.hash,
                           "nb_loots": file.loots.all().count()})
 
+        loots = {}
+        loots_types = [_.name for _ in LootTypeModel.objects.all()]
+        for type in loots_types:
+            result = LootModel.objects.filter(type__name=type, file__firmware=firmware).count()
+            loots[type] = result
+
         return JsonResponse({"name": firmware.name,
                              "hash": firmware.hash,
                              "model": firmware.model,
                              "version": firmware.version,
                              "status": firmware.status,
+                             "loots": loots,
                              "filesize": firmware.filesize,
                              "brand": firmware.brand.name,
                              "files": files,
