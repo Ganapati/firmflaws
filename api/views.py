@@ -79,14 +79,11 @@ def get_firmware(request, hash):
 
         files = []
         for file in firmware.files.all():
-            loots = []
-            for loot in file.loots.all():
-                loots.append({"type": loot.type.name, "info": loot.info})
             files.append({"filename": file.filename,
                           "size": file.filesize,
                           "type": file.file_type,
                           "hash": file.hash,
-                          "loots": loots})
+                          "nb_loots": file.loots.all().count()})
 
         return JsonResponse({"name": firmware.name,
                              "hash": firmware.hash,
@@ -143,14 +140,13 @@ def get_file(request, hash):
                     "filename": file.filename,
                     "informations": file.informations,
                     "filesize": file.filesize}
-        if file.graph_file != "":
+        if is_elf(file):
+            response["imports"] = file.imports
             response["graph"] = True
-        else:
-            if is_elf(file):
+            if file.graph_file == "":
                 workspace = file.firmware.all()[0].filepath.replace("firmware",
                                                                     "")
                 parse_elf(workspace, file)
-                response["graph"] = True
 
         if "ASCII text" in file.file_type:
             content = ""

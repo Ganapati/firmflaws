@@ -27,10 +27,9 @@ def parse_elf(workspace, file):
 
 def insecure_imports(file):
     r2 = r2pipe.open(file.filepath)
-    imports = ','.join([_[_.index("name=")+5:] for _ in r2.cmd("ii").split("\n") if "name=" in _])
+    imports = "\n".join([_ for _ in r2.cmd("ii").split("\n") if "name=" in _])
     file.imports = imports
     file.save()
-    imports = imports.split(",")
     type = "potentially insecure function"
     for insecure_function in settings.INSECURE_FUNCTIONS:
         if insecure_function in imports:
