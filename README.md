@@ -29,6 +29,9 @@ Return 10 latests firmwares analysis
 ### GET /api/firmware/#hash#
 Return firmware informations (files, etc.)
 
+### GET /api/firmware/hierarchy/#hash#
+Return firmware informations + hierarchy as string for treeeJS frontend
+
 ### GET /api/firmware/#hash#?raw
 Download firmware
 
