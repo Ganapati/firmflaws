@@ -21,9 +21,9 @@ def parse(filename):
     for line in results.split("\n"):
     	if "High" in line or "Medium" in line:
     		infos = line.split(":")
-    		line = infos[1]
-    		rank = infos[2]
-    		method = infos[3]
+    		line = infos[1].strip()
+    		rank = infos[2].strip()
+    		method = infos[3].strip()
     		msg = "%s : %s in line %s" % (rank, method, line)
     		finds.append(msg)
     return finds
