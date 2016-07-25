@@ -54,12 +54,14 @@ Run it manually every time a firmware is uploaded (for the moment)
 ## Dependencies
  - Radare2 from github : https://github.com/radare/radare2.git
  - Binwalk from github : https://github.com/devttys0/binwalk
+ - rats : https://security.web.cern.ch/security/recommendations/en/codetools/rats.shtml
  - graphviz
  - pydot
  - Django
  - r2pipe
  - python-magic
  - squashfs-tools
+ - python3-openssl
 
 ## Contributors
  - MisterCh0c (@MisterCh0c)

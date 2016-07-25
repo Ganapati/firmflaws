@@ -4,6 +4,7 @@ from lib.extract import Extractor
 from django.conf import settings
 from lib.parseELF import insecure_imports, is_elf, binary_informations
 from lib.rats import is_parsable, parse
+from lib.cert import is_cert, check_cert
 import magic
 import re
 import os
@@ -133,6 +134,25 @@ class Command(BaseCommand):
                 loot.type = loot_type
                 loot.info = msg
                 loot.save()
+
+
+        if is_cert(file.filepath):
+            type = "certificate"
+            try:
+                loot_type = LootTypeModel.objects.get(name=type)
+            except LootTypeModel.DoesNotExist:
+                loot_type = LootTypeModel()
+                loot_type.name = type
+                loot_type.save()
+            try:
+                for msg in check_cert(file.filepath):
+                    loot = LootModel()    
+                    loot.file = file
+                    loot.type = loot_type
+                    loot.info = msg
+                    loot.save()
+            except:
+                pass
 
     def set_status(self, status):
         self.firmware.status = status
