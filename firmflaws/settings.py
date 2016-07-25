@@ -126,6 +126,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# Rats static code analysis : https://security.web.cern.ch/security/recommendations/en/codetools/rats.shtml
+RATS_BINARY = "/bin/rats"
+
 FIRMWARES_FOLDER = '/tmp/firmflaws/'
 LOOTS_FILENAMES = {"certificate": ['*.pem','*.crt','*p7b','*p12','*.cer'],
                    "configuration": ['*.conf','*.cfg','*.ini', '*.xml', "*.sql"],

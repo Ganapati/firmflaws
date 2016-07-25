@@ -3,6 +3,7 @@ from api.models import FirmwareModel, FileModel, LootModel, LootTypeModel
 from lib.extract import Extractor
 from django.conf import settings
 from lib.parseELF import insecure_imports, is_elf, binary_informations
+from lib.rats import is_parsable, parse
 import magic
 import re
 import os
@@ -117,6 +118,21 @@ class Command(BaseCommand):
         if is_elf(file):
             insecure_imports(file)
             binary_informations(file)
+
+        if is_parsable(file.filepath):
+            type = "static source analysis"
+            try:
+                loot_type = LootTypeModel.objects.get(name=type)
+            except LootTypeModel.DoesNotExist:
+                loot_type = LootTypeModel()
+                loot_type.name = type
+                loot_type.save()
+            for msg in parse(file.filepath):
+                loot = LootModel()    
+                loot.file = file
+                loot.type = loot_type
+                loot.info = msg
+                loot.save()
 
     def set_status(self, status):
         self.firmware.status = status
