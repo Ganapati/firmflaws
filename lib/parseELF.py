@@ -43,7 +43,7 @@ def insecure_imports(file):
             loot = LootModel()
             loot.file = file
             loot.type = loot_type
-            loot.info = "find %s in file" % insecure_function
+            loot.info = insecure_function
             loot.save()
 
 def binary_informations(file):
