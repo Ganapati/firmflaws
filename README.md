@@ -57,3 +57,8 @@ Run it manually every time a firmware is uploaded (for the moment)
  - r2pipe
  - python-magic
  - squashfs-tools
+
+## Contributors
+ - MisterCh0c (@MisterCh0c)
+ - Ganapati (@G4N4P4T1)
+ - Geoffrey

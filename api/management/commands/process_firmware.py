@@ -97,12 +97,22 @@ class Command(BaseCommand):
                 loot_type.name = type
                 loot_type.save()
             for value in values:
-                if re.search(str.encode(value), content, re.IGNORECASE):
-                    loot = LootModel()
-                    loot.file = file
-                    loot.type = loot_type
-                    loot.info = "find %s in file" % value
-                    loot.save()
+                matchs = re.findall(str.encode(value),
+                                    content,
+                                    re.IGNORECASE|re.MULTILINE)
+                if matchs:
+                    for  match in matchs:
+                        try:
+                            loot = LootModel.objects.get(type=loot_type, 
+                                                         file=file, 
+                                                         info=match.decode("utf-8"))
+                            continue
+                        except LootModel.DoesNotExist:
+                            loot = LootModel()
+                            loot.file = file
+                            loot.type = loot_type
+                            loot.info = match.decode("utf-8")
+                            loot.save()
 
         if is_elf(file):
             insecure_imports(file)

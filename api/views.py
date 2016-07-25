@@ -93,22 +93,53 @@ def get_firmware(request, hash):
             result = LootModel.objects.filter(type__name=type, file__firmware=firmware).count()
             loots[type] = result
 
-        #maybe let's keep this in db?
-        mytree = parseFilesToHierarchy(files)
-
         return JsonResponse({"name": firmware.name,
                              "hash": firmware.hash,
                              "model": firmware.model,
                              "version": firmware.version,
                              "status": firmware.status,
                              "loots": loots,
+                             "files": files,
                              "filesize": firmware.filesize,
                              "brand": firmware.brand.name,
-                             "hierarchy": mytree,
                              "description": firmware.description})
 
     except FirmwareModel.DoesNotExist:
         return JsonResponse({"error": "firmware not found", "hash": hash})
+
+def get_hierarchy(request, hash):
+    try:
+        firmware = FirmwareModel.objects.get(hash=hash)
+
+        files = []
+        for file in firmware.files.all():
+            files.append({"filename": file.filename,
+                          "size": file.filesize,
+                          "type": file.file_type,
+                          "hash": file.hash,
+                          "nb_loots": file.loots.all().count()})
+
+        loots = {}
+        loots_types = [_.name for _ in LootTypeModel.objects.all()]
+        for type in loots_types:
+            result = LootModel.objects.filter(type__name=type, file__firmware=firmware).count()
+            loots[type] = result
+
+        #maybe let's keep this in db?
+        mytree = parseFilesToHierarchy(files)
+        return JsonResponse({"name": firmware.name,
+                             "hash": firmware.hash,
+                             "model": firmware.model,
+                             "version": firmware.version,
+                             "status": firmware.status,
+                             "loots": loots,
+                             "hierarchy": mytree,
+                             "filesize": firmware.filesize,
+                             "brand": firmware.brand.name,
+                             "description": firmware.description})
+    except FirmwareModel.DoesNotExist:
+        return JsonResponse({"error": "firmware not found", "hash": hash})
+
 
 def get_file(request, hash):
     """ Return file from given hash
