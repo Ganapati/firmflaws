@@ -7,7 +7,7 @@ def is_parsable(filename):
     """
     
     filename, file_extension = os.path.splitext(filename)
-    return file_extension in ['.php', '.pl', '.c', '.cpp', '.py', '.cgi', '.inc']:
+    return file_extension in ['.php', '.pl', '.c', '.cpp', '.py', '.cgi', '.inc']
         
 def parse(filename):
     """ Do the rats parsing here

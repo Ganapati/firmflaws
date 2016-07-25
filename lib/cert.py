@@ -7,7 +7,7 @@ def is_cert(filename):
     """
     
     filename, file_extension = os.path.splitext(filename)
-    return file_extension in ['.cert', '.pem']:
+    return file_extension in ['.cert', '.pem']
 
 def check_cert(filename):
     """ Check revocation date and bits
