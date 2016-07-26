@@ -49,5 +49,5 @@ def insecure_imports(file):
 def binary_informations(file):
     r2 = r2pipe.open(file.filepath)
     informations = r2.cmd("i")
-    file.informations = informations
+    file.informations = informations.replace(settings.FIRMWARES_FOLDER, '')
     file.save()
