@@ -30,6 +30,7 @@ class FileModel(models.Model):
     imports = models.TextField()
     informations = models.TextField()
     file_type = models.TextField()
+    nb_loots = models.IntegerField(default=0)
 
 class LootTypeModel(models.Model):
     name = models.CharField(unique=True, max_length=255)

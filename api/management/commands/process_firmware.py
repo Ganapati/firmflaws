@@ -64,6 +64,9 @@ class Command(BaseCommand):
                     file_obj.save()
                     self.find_loots(file_obj)
 
+                    # Performance tweak
+                    file_obj.nb_loots = file_obj.loots.all().count()
+
         print("Files registered")
 
     def find_loots(self, file):

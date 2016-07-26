@@ -85,7 +85,7 @@ def get_firmware(request, hash):
                           "size": file.filesize,
                           "type": file.file_type,
                           "hash": file.hash,
-                          "nb_loots": file.loots.all().count()})
+                          "nb_loots": file.nb_loots})
 
         loots = {}
         loots_types = [_.name for _ in LootTypeModel.objects.all()]
@@ -117,7 +117,7 @@ def get_hierarchy(request, hash):
                           "size": file.filesize,
                           "type": file.file_type,
                           "hash": file.hash,
-                          "nb_loots": file.loots.all().count()})
+                          "nb_loots": file.nb_loots})
 
         loots = {}
         loots_types = [_.name for _ in LootTypeModel.objects.all()]
