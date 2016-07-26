@@ -120,8 +120,9 @@ class Command(BaseCommand):
                             loot.save()
 
         if is_elf(file):
-            insecure_imports(file)
-            binary_informations(file)
+            handle = open_pipe(file)
+            insecure_imports(file, handle)
+            binary_informations(file, handle)
 
         if is_parsable(file.filepath):
             type = "static source analysis"
