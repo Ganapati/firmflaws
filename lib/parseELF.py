@@ -4,6 +4,9 @@ import r2pipe
 import os
 import pydot
 
+def open_pipe(file):
+    return r2pipe.open(file.filepath)
+
 def is_elf(file):
     with open(file.filepath, "rb") as fd:
         head = fd.read(4)
@@ -25,8 +28,8 @@ def parse_elf(workspace, file):
     file.save()
     print("%s parsed" % file.filepath)
 
-def insecure_imports(file):
-    r2 = r2pipe.open(file.filepath)
+def insecure_imports(file, handle):
+    r2 = handle
     imports = "\n".join([_ for _ in r2.cmd("ii").split("\n") if "name=" in _])
     file.imports = imports.replace(settings.FIRMWARES_FOLDER, "")
     file.save()
@@ -46,8 +49,8 @@ def insecure_imports(file):
             loot.info = insecure_function
             loot.save()
 
-def binary_informations(file):
-    r2 = r2pipe.open(file.filepath)
+def binary_informations(file, handle):
+    r2 = handle
     informations = r2.cmd("i")
     file.informations = informations.replace(settings.FIRMWARES_FOLDER, '')
     file.save()
