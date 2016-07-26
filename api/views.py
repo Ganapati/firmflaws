@@ -195,11 +195,11 @@ def get_file(request, hash):
                     "hash": file.hash,
                     "type": file.file_type,
                     "filename": file.filename,
-                    "informations": file.informations,
                     "filesize": file.filesize}
 
         if is_elf(file):
             response["imports"] = file.imports
+            response["informations"] = file.informations
             
             if file.graph_file == "":
                 response["graph"] = ''
@@ -248,8 +248,11 @@ def get_stats(request):
             result = LootModel.objects.filter(type__name=type).count()
             response[type] = result
 
-        nb_firmwares = FirmwareModel.objects.all().count()
-        return JsonResponse({"firmwares": nb_firmwares,
+        nb_firmwares_done = FirmwareModel.objects.filter(status="done").count()
+        nb_firmwares_total = FirmwareModel.objects.all().count()
+
+        return JsonResponse({"firmwares_done": nb_firmwares_done,
+                             "firmwares_total": nb_firmwares_total,
                              "stats_loots": response})
     except:
         return JsonResponse({"error": "unknown error"})
