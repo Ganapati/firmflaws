@@ -223,7 +223,7 @@ def get_latest(request):
     """ Return the 10 last firmwares
     """
     try:
-        firmwares = FirmwareModel.objects.all().order_by('-id')[:10]
+        firmwares = FirmwareModel.objects.filter(status="done").order_by('-id')[:10]
         response = []
         for firmware in firmwares:
             response.append({"name": firmware.name,
