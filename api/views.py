@@ -162,7 +162,7 @@ def get_file(request, hash):
 
         # Graph download
         if 'graph' in request.GET.keys():
-            if file.graph_file != "":
+            if file.graph_file != '' and file.graph_file != False:
                 content = ""
                 with open(file.graph_file, "rb") as fd:
                     content = fd.read()
@@ -170,8 +170,22 @@ def get_file(request, hash):
                 content_type = "image/png"
                 response = HttpResponse(content, content_type=content_type)
                 return response
-            else:
+            elif file.graph_file == False:
                 return HttpResponse("no graph")
+            elif file.graph_file == '':
+                try:
+                    workspace = file.firmware.all()[0].filepath.replace("firmware",
+                                                                        "")
+                    parse_elf(workspace, file)
+                    with open(file.graph_file, "rb") as fd:
+                        content = fd.read()
+
+                    content_type = "image/png"
+                    response = HttpResponse(content, content_type=content_type)
+                except:
+                    file.graph_file = False
+                    file.save()
+                    return HttpResponse("no graph")
 
         loots = []
         for loot in file.loots.all():
@@ -188,15 +202,7 @@ def get_file(request, hash):
             response["imports"] = file.imports
             
             if file.graph_file == "":
-                try:
-                    workspace = file.firmware.all()[0].filepath.replace("firmware",
-                                                                        "")
-                    parse_elf(workspace, file)
-                    response["graph"] = True
-                except:
-                    file.graph_file = False
-                    file.save()
-                    response["graph"] = False
+                response["graph"] = ''
             else:
                 if file.graph_file == False:
                     response["graph"] = False
