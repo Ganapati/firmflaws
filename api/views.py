@@ -4,6 +4,7 @@ from django.http import JsonResponse, HttpResponse
 from django.db import IntegrityError
 from django.conf import settings
 from django.db.models import Q
+from api.management.commands.process_firmware_thread import start_process_thread
 from api.models import FirmwareModel, FileModel, LootModel, BrandModel, LootTypeModel
 from lib.parseELF import is_elf, parse_elf
 from lib.util import parseFilesToHierarchy
@@ -58,6 +59,7 @@ def upload(request):
 
     try:
         firmware_obj.save()
+        start_process_thread()
         return JsonResponse({"status": "new", "hash": firmware_obj.hash})
     except IntegrityError:
         return JsonResponse({"status": "repost", "hash": firmware_obj.hash})

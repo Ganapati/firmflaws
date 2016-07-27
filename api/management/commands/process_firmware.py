@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from api.models import FirmwareModel, FileModel, LootModel, LootTypeModel
 from lib.extract import Extractor
 from django.conf import settings
-from lib.parseELF import insecure_imports, is_elf, binary_informations
+from lib.parseELF import insecure_imports, is_elf, binary_informations, open_pipe
 from lib.rats import is_parsable, parse
 from lib.cert import is_cert, check_cert
 import magic
@@ -12,23 +12,38 @@ import fnmatch
 import shutil
 import uuid
 import hashlib
+from pathlib import Path
+
 
 class Command(BaseCommand):
     help = 'process firmware'
 
     def handle(self, *args, **options):
-        try:
-            self.firmware = FirmwareModel.objects.filter(status="waiting")[0]
+        process_lock = os.path.join(settings.FIRMWARES_FOLDER, ".process_lock")
+
+        if not os.path.isfile(process_lock):
+            Path(process_lock).touch()
+            while True:
+                try:
+                    self.firmware = FirmwareModel.objects.filter(status="waiting")[0]
+                    try:
+                        self.run()
+                    except:
+                        self.firmware.status = "failed"
+                        self.firmware.save()
+                except IndexError:
+                    self.stdout.write("No waiting firmwares")
+                    break
+            os.remove(process_lock)
+
+    def run(self):
             self.workspace = self.firmware.filepath.replace("firmware", "")
             self.set_status("0")
-
             extractor = Extractor(self.workspace, self.firmware.filepath)
             self.extracted_path = extractor.extract()
             self.set_status("50")
             self.register_files()
             self.set_status("done")
-        except IndexError:
-            self.stdout.write("No waiting firmwares")
 
     def register_files(self):
         print("Start registering files")
