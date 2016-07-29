@@ -110,6 +110,33 @@ def get_firmware(request, hash):
     except FirmwareModel.DoesNotExist:
         return JsonResponse({"error": "firmware not found", "hash": hash})
 
+def get_firmware_summary(request, hash):
+    """ Return firmware informations
+    """
+    try:
+        firmware = FirmwareModel.objects.get(hash=hash)
+
+        loots = {}
+        loots_types = [_.name for _ in LootTypeModel.objects.all()]
+        for type in loots_types:
+            result = LootModel.objects.filter(type__name=type, file__firmware=firmware).count()
+            loots[type] = result
+
+        return JsonResponse({"name": firmware.name,
+                             "hash": firmware.hash,
+                             "model": firmware.model,
+                             "version": firmware.version,
+                             "status": firmware.status,
+                             "loots": loots,
+                             "created_at": firmware.created_at,
+                             "filesize": firmware.filesize,
+                             "brand": firmware.brand.name,
+                             "description": firmware.description})
+
+    except FirmwareModel.DoesNotExist:
+        return JsonResponse({"error": "firmware not found", "hash": hash})
+
+
 def get_hierarchy(request, hash):
     try:
         firmware = FirmwareModel.objects.get(hash=hash)

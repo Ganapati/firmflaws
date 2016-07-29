@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from django.contrib import admin
-from api.views import upload, get_firmware, get_hierarchy
+from api.views import upload, get_firmware, get_hierarchy, get_firmware_summary
 from api.views import get_file, get_latest, get_stats, search
 
 urlpatterns = [
@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^stats/?$', get_stats, name='get_stats'),
     url(r'^search/?$', search, name='search'),
     url(r'^firmware/hierarchy/(?P<hash>[^/]+)/?$', get_hierarchy, name='get_hierarchy'),
+    url(r'^firmware/summary/(?P<hash>[^/]+)/?$', get_firmware_summary, name='get_firmware_summary'),
     url(r'^firmware/(?P<hash>[^/]+)/?$', get_firmware, name='get_firmware'),
     url(r'^file/(?P<hash>[^/]+)/?$', get_file, name='get_file')
 ]
