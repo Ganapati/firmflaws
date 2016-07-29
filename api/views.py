@@ -101,6 +101,7 @@ def get_firmware(request, hash):
                              "version": firmware.version,
                              "status": firmware.status,
                              "loots": loots,
+                             "created_at": firmware.created_at,
                              "files": files,
                              "filesize": firmware.filesize,
                              "brand": firmware.brand.name,
@@ -136,6 +137,7 @@ def get_hierarchy(request, hash):
                              "status": firmware.status,
                              "loots": loots,
                              "hierarchy": mytree,
+                             "created_at": firmware.created_at,
                              "filesize": firmware.filesize,
                              "brand": firmware.brand.name,
                              "description": firmware.description})

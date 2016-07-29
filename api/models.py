@@ -16,6 +16,7 @@ class FirmwareModel(models.Model):
     filepath = models.CharField(max_length=255)
     version = models.CharField(max_length=255)
     filesize = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
 class FileModel(models.Model):
     firmware = models.ManyToManyField(FirmwareModel, related_name="files")
