@@ -19,31 +19,36 @@
             </div>
         </div>
         <div class="container">
-            <a id="content"></a>
-            <h2 class="section-header">File</h2>
-            <div class="row">
-              <div class="col-md-4">
-                   <ul>
-                  {% for file in hierarchy %}
-                    <li>
-                        <a href="#" onclick="loadfile('{{ file.hash }}');return false;">{{ file.filename }}{% if file.nb_loots > 0 %} <span class="badge">{{ file.nb_loots }}</span>{% endif %}</a>
-                    </li>
-                  {% endfor %}
-                  </ul>
-              </div>
-              <div class="col-md-8">
-                    <p class="lead text-muted">Informations</p>
-                    <div id="file_infos">
-                    <ul>
-                        {% for type, nb in firmware.loots.items %}
-                            <li>
-                            {{ type }}: {{ nb }}
-                            </li>
-                        {% endfor %}
-                    </ul>
+            {% if firmware.status == "done" %}
+                <a id="content"></a>
+                <h2 class="section-header">File</h2>
+                <div class="row">
+                  <div class="col-md-4">
+                       <ul>
+                      {% for file in hierarchy %}
+                        <li>
+                            <a href="#" onclick="loadfile('{{ file.hash }}');return false;">{{ file.filename }}{% if file.nb_loots > 0 %} <span class="badge">{{ file.nb_loots }}</span>{% endif %}</a>
+                        </li>
+                      {% endfor %}
+                      </ul>
+                  </div>
+                  <div class="col-md-8">
+                        <p class="lead text-muted">Informations</p>
+                        <div id="file_infos">
+                        <ul>
+                            {% for type, nb in firmware.loots.items %}
+                                <li>
+                                {{ type }}: {{ nb }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+            {% else %}
+                <h2 class="section-header">Parsing not completed</h2>
+                <h4 class="section-header">Go grab a beer and come back later.</h4>
+            {% endif %}
         </div>
     </section>
 {% endblock %}
