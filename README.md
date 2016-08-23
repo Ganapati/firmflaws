@@ -1,12 +1,23 @@
 # firmflaws
-Firmware analysis API (JSON)
+Firmware analysis Website and API (JSON)
 
 Upload firmware and run static analysis (parse firmware, grep strings, search for interesting files (conf, certs, db files...), etc.).
 
 ## Usage
- - Upload a new firmware to /api/upload
- - Launch analysis with python3 ./manage.py process_firmware
+ - Upload a new firmware
  - PROFIT !
+
+## WEB INTERFACE
+
+### Homepage (upload)
+![alt tag](hhttps://raw.githubusercontent.com/Ganapati/firmflaws/master/images/home.jpg)
+
+### Firmware summary
+![alt tag](https://raw.githubusercontent.com/Ganapati/firmflaws/master/images/firmware_summary.jpg)
+
+
+### File summary w/ static code source analysis
+![alt tag](https://raw.githubusercontent.com/Ganapati/firmflaws/master/images/file_analysis.jpg)
 
 ## API
 ### POST /api/upload
