@@ -17,6 +17,7 @@ import traceback
 import magic
 import binwalk
 
+
 class Extractor(object):
     """
     Class that extracts kernels and filesystems from firmware images, given an
@@ -141,14 +142,14 @@ class Extractor(object):
         # Recurse into single directory chains, e.g. jffs2-root/fs_1/.../
         path = start
         while (len(os.listdir(path)) == 1 and
-               os.path.isdir(os.path.join(path, os.listdir(path)[0]))):
+                   os.path.isdir(os.path.join(path, os.listdir(path)[0]))):
             path = os.path.join(path, os.listdir(path)[0])
 
         # count number of unix-like directories
         count = 0
         for subdir in os.listdir(path):
             if subdir in Extractor.UNIX_DIRS and \
-                os.path.isdir(os.path.join(path, subdir)):
+                    os.path.isdir(os.path.join(path, subdir)):
                 count += 1
 
         # check for extracted filesystem, otherwise update queue
@@ -196,6 +197,7 @@ class Extractor(object):
 
         ExtractionItem(self, path, 0).extract()
 
+
 class ExtractionItem(object):
     """
     Class that encapsulates the state of a single item that is being extracted.
@@ -236,7 +238,7 @@ class ExtractionItem(object):
 
         # Output file path and filename prefix
         self.output = os.path.join(self.extractor.output_dir, self.tag) if \
-                                   self.extractor.output_dir else None
+            self.extractor.output_dir else None
 
         # Status, with terminate indicating early termination for this item
         self.terminate = False
@@ -255,7 +257,7 @@ class ExtractionItem(object):
         """
         Prints output string with appropriate depth indentation.
         """
-        #print(("\t" * self.depth + fmt))
+        # print(("\t" * self.depth + fmt))
         pass
 
     def generate_tag(self):
@@ -272,15 +274,15 @@ class ExtractionItem(object):
                 brand = self.extractor.brand
             else:
                 brand = os.path.relpath(self.item).split(os.path.sep)[0]
-            cur.execute("SELECT id FROM brand WHERE name=%s", (brand, ))
+            cur.execute("SELECT id FROM brand WHERE name=%s", (brand,))
             brand_id = cur.fetchone()
             if not brand_id:
                 cur.execute("INSERT INTO brand (name) VALUES (%s) RETURNING id",
-                            (brand, ))
+                            (brand,))
                 brand_id = cur.fetchone()
             if brand_id:
                 cur.execute("SELECT id FROM image WHERE hash=%s",
-                            (self.checksum, ))
+                            (self.checksum,))
                 image_id = cur.fetchone()
                 if not image_id:
                     cur.execute("INSERT INTO image (filename, brand_id, hash) \
@@ -300,7 +302,7 @@ class ExtractionItem(object):
             self.printf(">> Database Image ID: %s" % image_id[0])
 
         return str(image_id[0]) if \
-               image_id else os.path.basename(self.item) + "_" + self.checksum
+            image_id else os.path.basename(self.item) + "_" + self.checksum
 
     def get_kernel_status(self):
         """
@@ -343,7 +345,7 @@ class ExtractionItem(object):
             try:
                 cur = self.database.cursor()
                 cur.execute("UPDATE image SET " + field + "='" + value +
-                            "' WHERE id=%s", (self.tag, ))
+                            "' WHERE id=%s", (self.tag,))
                 self.database.commit()
             except BaseException:
                 ret = False
@@ -485,7 +487,7 @@ class ExtractionItem(object):
                 # uImage
                 if "uImage header" in entry.description:
                     if not self.get_kernel_status() and \
-                        "OS Kernel Image" in entry.description:
+                                    "OS Kernel Image" in entry.description:
                         kernel_offset = entry.offset + 64
                         kernel_size = 0
 
@@ -495,7 +497,7 @@ class ExtractionItem(object):
                                     i for i in stmt if i.isdigit()), 10)
 
                         if kernel_size != 0 and kernel_offset + kernel_size \
-                            <= os.path.getsize(self.item):
+                                <= os.path.getsize(self.item):
                             self.printf(">>>> %s" % entry.description)
 
                             tmp_fd, tmp_path = tempfile.mkstemp(dir=self.temp)
@@ -506,17 +508,17 @@ class ExtractionItem(object):
                                                     self.depth, self.tag)
 
                             return kernel.extract()
-                    # elif "RAMDisk Image" in entry.description:
-                    #     self.printf(">>>> %s" % entry.description)
-                    #     self.printf(">>>> Skipping: RAMDisk / initrd")
-                    #     self.terminate = True
-                    #     return True
+                            # elif "RAMDisk Image" in entry.description:
+                            #     self.printf(">>>> %s" % entry.description)
+                            #     self.printf(">>>> Skipping: RAMDisk / initrd")
+                            #     self.terminate = True
+                            #     return True
 
                 # TP-Link or TRX
                 elif not self.get_kernel_status() and \
-                    not self.get_rootfs_status() and \
-                    "rootfs offset: " in entry.description and \
-                    "kernel offset: " in entry.description:
+                        not self.get_rootfs_status() and \
+                                "rootfs offset: " in entry.description and \
+                                "kernel offset: " in entry.description:
                     kernel_offset = 0
                     kernel_size = 0
                     rootfs_offset = 0
@@ -534,15 +536,15 @@ class ExtractionItem(object):
 
                     # compute sizes if only offsets provided
                     if kernel_offset != rootfs_size and kernel_size == 0 and \
-                        rootfs_size == 0:
+                                    rootfs_size == 0:
                         kernel_size = rootfs_offset - kernel_offset
                         rootfs_size = os.path.getsize(self.item) - rootfs_offset
 
                     # ensure that computed values are sensible
                     if (kernel_size > 0 and kernel_offset + kernel_size \
-                        <= os.path.getsize(self.item)) and \
-                        (rootfs_size != 0 and rootfs_offset + rootfs_size \
-                            <= os.path.getsize(self.item)):
+                            <= os.path.getsize(self.item)) and \
+                            (rootfs_size != 0 and rootfs_offset + rootfs_size \
+                                    <= os.path.getsize(self.item)):
                         self.printf(">>>> %s" % entry.description)
 
                         tmp_fd, tmp_path = tempfile.mkstemp(dir=self.temp)
@@ -683,8 +685,8 @@ class ExtractionItem(object):
 
                         for filename in files:
                             if count > ExtractionItem.RECURSION_BREADTH:
-                                self.printf(">> Skipping: recursion breadth %d"\
-                                    % ExtractionItem.RECURSION_BREADTH)
+                                self.printf(">> Skipping: recursion breadth %d" \
+                                            % ExtractionItem.RECURSION_BREADTH)
                                 self.terminate = True
                                 return True
                             else:
@@ -702,6 +704,7 @@ class ExtractionItem(object):
                                         return True
                             count += 1
         return False
+
 
 def main():
     parser = argparse.ArgumentParser(description="Extracts filesystem and \
@@ -728,6 +731,7 @@ def main():
                         result.kernel, result.parallel, result.sql,
                         result.brand)
     extract.extract()
+
 
 if __name__ == "__main__":
     main()

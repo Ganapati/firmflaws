@@ -2,12 +2,14 @@ import os
 from OpenSSL import crypto as c
 from datetime import datetime
 
+
 def is_cert(filename):
     """ check if file is a cert
     """
-    
+
     filename, file_extension = os.path.splitext(filename)
     return file_extension in ['.cert', '.pem']
+
 
 def check_cert(filename):
     """ Check revocation date and bits
@@ -22,11 +24,11 @@ def check_cert(filename):
             response.append("pubkey bits : %s" % bits)
 
         now = datetime.datetime.now()
-        current = "%s%02d%02d%02d%02d%02d" % (now.year, 
-                                              now.month, 
-                                              now.day, 
-                                              now.hour, 
-                                              now.minute, 
+        current = "%s%02d%02d%02d%02d%02d" % (now.year,
+                                              now.month,
+                                              now.day,
+                                              now.hour,
+                                              now.minute,
                                               now.second)
         if int(current) > int(end_date):
             response.append("Certificate expired")

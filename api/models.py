@@ -6,6 +6,7 @@ from django.db import models
 class BrandModel(models.Model):
     name = models.CharField(unique=True, max_length=255)
 
+
 class FirmwareModel(models.Model):
     brand = models.ForeignKey(BrandModel, related_name="firmwares")
     hash = models.CharField(unique=True, max_length=32)
@@ -17,6 +18,7 @@ class FirmwareModel(models.Model):
     version = models.CharField(max_length=255)
     filesize = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
+
 
 class FileModel(models.Model):
     firmware = models.ManyToManyField(FirmwareModel, related_name="files")
@@ -33,8 +35,10 @@ class FileModel(models.Model):
     file_type = models.TextField()
     nb_loots = models.IntegerField(default=0)
 
+
 class LootTypeModel(models.Model):
     name = models.CharField(unique=True, max_length=255)
+
 
 class LootModel(models.Model):
     file = models.ForeignKey(FileModel, related_name="loots")

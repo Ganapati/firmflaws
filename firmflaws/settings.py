@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     'corsheaders',
     'lib',
     'api',
-    'front'
+    'front',
+    'debug_toolbar',
+    'django_cleanup',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -53,6 +55,8 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'firmflaws.settings.NonHtmlDebugToolbarMiddleware',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -62,7 +66,9 @@ ROOT_URLCONF = 'firmflaws.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+                os.path.join('front', 'templates'),
+            ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -80,11 +86,14 @@ WSGI_APPLICATION = 'firmflaws.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql', 
+        'NAME': 'firmflaws',
+        'USER': 'firmflaws',
+        'PASSWORD': 'firmflaws',
+        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
+        'PORT': '3306',
     }
 }
 
@@ -120,11 +129,44 @@ USE_L10N = True
 
 USE_TZ = True
 
+import json
+from django.http import HttpResponse
+class NonHtmlDebugToolbarMiddleware(object):
+    """
+    The Django Debug Toolbar usually only works for views that return HTML.
+    This middleware wraps any non-HTML response in HTML if the request
+    has a 'debug' query parameter (e.g. http://localhost/foo?debug)
+    Special handling for json (pretty printing) and
+    binary data (only show data length)
+    """
+
+    @staticmethod
+    def process_response(request, response):
+        debug = request.GET.get('debug', 'UNSET')
+        
+        if debug != 'UNSET':
+            if response['Content-Type'] == 'application/octet-stream':
+                new_content = '<html><body>Binary Data, ' \
+                    'Length: {}</body></html>'.format(len(response.content))
+                response = HttpResponse(new_content.decode("utf-8"))
+            elif response['Content-Type'] != 'text/html':
+                content = response.content
+                try:
+                    json_ = json.loads(content.decode("utf-8"))
+                    content = json.dumps(json_, sort_keys=True, indent=2)
+                except ValueError:
+                    pass
+                response = HttpResponse('<html><body><pre>{}'
+                                        '</pre></body></html>'.format(content))
+
+        return response
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
 # Rats static code analysis : https://security.web.cern.ch/security/recommendations/en/codetools/rats.shtml
 RATS_BINARY = "/bin/rats"
@@ -136,7 +178,7 @@ LOOTS_FILENAMES = {"certificate": ['*.pem','*.crt','*p7b','*p12','*.cer'],
                    "databases": ['*.db','*.sqlite'],
                    "passwords": ['passwd','shadow','*.psk']}
 
-LOOTS_GREP = {"passwords": ["passwd", "password"],
+LOOTS_GREP = {"interesting greps": ["passwd", "password"],
               "ipv4": ["(?:[0-9]{1,3}\.){3}[0-9]{1,3}"],
               "email": ["[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+"]}
 

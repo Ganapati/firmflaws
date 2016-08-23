@@ -1,13 +1,14 @@
 import json
 
+
 def _parseFiles(file, result):
-    #lentgh minus 1 because the first element of array is '' since the string begins with '/'
+    # lentgh minus 1 because the first element of array is '' since the string begins with '/'
     folders = file["filename"].split("/")
-    length = len(folders)-1
+    length = len(folders) - 1
     current = 1
 
     tmpResult = result
-    #Parse folders (not the last one, which is normally a file)
+    # Parse folders (not the last one, which is normally a file)
     while current < length:
 
         folder = folders[current]
@@ -28,11 +29,11 @@ def _parseFiles(file, result):
         tmpResult = tmp["children"]
         current += 1
 
-    #Parse the file itself (last one in path)
+    # Parse the file itself (last one in path)
     tmpResult.append({
         "name": folders[current],
         "type": "file",
-        "id": file["hash"]          
+        "id": file["hash"]
     })
 
 
@@ -41,7 +42,7 @@ def parseFilesToHierarchy(files):
     tmpResult = []
 
     for file in files:
-        #folders = file[0][0].split("/")
+        # folders = file[0][0].split("/")
         _parseFiles(file, result)
     result = "[" + (', '.join([json.dumps(x) for x in result])) + "]"
 

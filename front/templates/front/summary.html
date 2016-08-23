@@ -1,0 +1,49 @@
+{% extends 'front/layout.html' %}
+{% load static %}
+
+{% block content %}
+<header>
+    <div class="header-content">
+        <div class="header-content-inner">
+            <h1>{{ firmware.name }}</h1>
+            <h2>by {{ firmware.brand }}</h2>
+            <p>{{ firmware.description }}</p>
+            
+        </div>
+    </div>
+</header>
+    <section class="content">
+        <div class="container">
+            <div>
+                <h2 class="section-header">Informations</h2>
+            </div>
+        </div>
+        <div class="container">
+            <a id="content"></a>
+            <h2 class="section-header">File</h2>
+            <div class="row">
+              <div class="col-md-4">
+                   <ul>
+                  {% for file in hierarchy %}
+                    <li>
+                        <a href="#" onclick="loadfile('{{ file.hash }}');return false;">{{ file.filename }}{% if file.nb_loots > 0 %} <span class="badge">{{ file.nb_loots }}</span>{% endif %}</a>
+                    </li>
+                  {% endfor %}
+                  </ul>
+              </div>
+              <div class="col-md-8">
+                    <p class="lead text-muted">Informations</p>
+                    <div id="file_infos">
+                    <ul>
+                        {% for type, nb in firmware.loots.items %}
+                            <li>
+                            {{ type }}: {{ nb }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+              </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

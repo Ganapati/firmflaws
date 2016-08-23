@@ -1,15 +1,15 @@
 from django.conf.urls import url
 from django.contrib import admin
-from api.views import upload, get_firmware, get_hierarchy, get_firmware_summary
-from api.views import get_file, get_latest, get_stats, search
+from api.views import api_upload, api_get_firmware, api_get_hierarchy, api_get_firmware_summary
+from api.views import api_get_file, api_get_latest, api_get_stats, api_search
 
 urlpatterns = [
-    url(r'^upload/?$', upload, name='upload'),
-    url(r'^latest/?$', get_latest, name='get_latest'),
-    url(r'^stats/?$', get_stats, name='get_stats'),
-    url(r'^search/?$', search, name='search'),
-    url(r'^firmware/hierarchy/(?P<hash>[^/]+)/?$', get_hierarchy, name='get_hierarchy'),
-    url(r'^firmware/summary/(?P<hash>[^/]+)/?$', get_firmware_summary, name='get_firmware_summary'),
-    url(r'^firmware/(?P<hash>[^/]+)/?$', get_firmware, name='get_firmware'),
-    url(r'^file/(?P<hash>[^/]+)/?$', get_file, name='get_file')
+    url(r'^upload/?$', api_upload, name='api_upload'),
+    url(r'^latest/?$', api_get_latest, name='api_get_latest'),
+    url(r'^stats/?$', api_get_stats, name='api_get_stats'),
+    url(r'^search/?$', api_search, name='api_search'),
+    url(r'^firmware/hierarchy/(?P<hash>[^/]+)/?$', api_get_hierarchy, name='api_get_hierarchy'),
+    url(r'^firmware/summary/(?P<hash>[^/]+)/?$', api_get_firmware_summary, name='api_get_firmware_summary'),
+    url(r'^firmware/(?P<hash>[^/]+)/?$', api_get_firmware, name='api_get_firmware'),
+    url(r'^file/(?P<hash>[^/]+)/?$', api_get_file, name='api_get_file')
 ]

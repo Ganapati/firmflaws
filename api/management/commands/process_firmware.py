@@ -37,13 +37,13 @@ class Command(BaseCommand):
             os.remove(process_lock)
 
     def run(self):
-            self.workspace = self.firmware.filepath.replace("firmware", "")
-            self.set_status("0")
-            extractor = Extractor(self.workspace, self.firmware.filepath)
-            self.extracted_path = extractor.extract()
-            self.set_status("50")
-            self.register_files()
-            self.set_status("done")
+        self.workspace = self.firmware.filepath.replace("firmware", "")
+        self.set_status("0")
+        extractor = Extractor(self.workspace, self.firmware.filepath)
+        self.extracted_path = extractor.extract()
+        self.set_status("50")
+        self.register_files()
+        self.set_status("done")
 
     def register_files(self):
         print("Start registering files")
@@ -105,7 +105,7 @@ class Command(BaseCommand):
 
         # Find greppable loots
         loots_refs = settings.LOOTS_GREP
-        
+
         with open(file.filepath, "rb") as fd:
             content = fd.read()
 
@@ -119,12 +119,12 @@ class Command(BaseCommand):
             for value in values:
                 matchs = re.findall(str.encode(value),
                                     content,
-                                    re.IGNORECASE|re.MULTILINE)
+                                    re.IGNORECASE | re.MULTILINE)
                 if matchs:
-                    for  match in matchs:
+                    for match in matchs:
                         try:
-                            loot = LootModel.objects.get(type=loot_type, 
-                                                         file=file, 
+                            loot = LootModel.objects.get(type=loot_type,
+                                                         file=file,
                                                          info=match.decode("utf-8"))
                             continue
                         except LootModel.DoesNotExist:
@@ -148,12 +148,11 @@ class Command(BaseCommand):
                 loot_type.name = type
                 loot_type.save()
             for msg in parse(file.filepath):
-                loot = LootModel()    
+                loot = LootModel()
                 loot.file = file
                 loot.type = loot_type
                 loot.info = msg
                 loot.save()
-
 
         if is_cert(file.filepath):
             type = "certificate"
@@ -165,7 +164,7 @@ class Command(BaseCommand):
                 loot_type.save()
             try:
                 for msg in check_cert(file.filepath):
-                    loot = LootModel()    
+                    loot = LootModel()
                     loot.file = file
                     loot.type = loot_type
                     loot.info = msg

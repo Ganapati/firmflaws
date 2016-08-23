@@ -4,13 +4,16 @@ import r2pipe
 import os
 import pydot
 
+
 def open_pipe(file):
     return r2pipe.open(file.filepath)
+
 
 def is_elf(file):
     with open(file.filepath, "rb") as fd:
         head = fd.read(4)
     return (b"\x7FELF" == head)
+
 
 def parse_elf(workspace, file):
     r2 = r2pipe.open(file.filepath)
@@ -19,7 +22,7 @@ def parse_elf(workspace, file):
     result = r2.cmd("agC")
     output_dir = os.path.join(workspace, "graphs")
     if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
+        os.makedirs(output_dir)
 
     out_file = os.path.join(output_dir, file.hash)
     graph = pydot.graph_from_dot_data(result)
@@ -27,6 +30,7 @@ def parse_elf(workspace, file):
     file.graph_file = out_file
     file.save()
     print("%s parsed" % file.filepath)
+
 
 def insecure_imports(file, handle):
     r2 = handle
@@ -42,12 +46,13 @@ def insecure_imports(file, handle):
                 loot_type = LootTypeModel()
                 loot_type.name = type
                 loot_type.save()
-   
+
             loot = LootModel()
             loot.file = file
             loot.type = loot_type
             loot.info = insecure_function
             loot.save()
+
 
 def binary_informations(file, handle):
     r2 = handle

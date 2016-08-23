@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponse
 from django.db import IntegrityError
@@ -9,12 +8,10 @@ from api.models import FirmwareModel, FileModel, LootModel, BrandModel, LootType
 from lib.parseELF import is_elf, parse_elf
 from lib.util import parseFilesToHierarchy
 import hashlib
-import string
-import json
 import os
 
 @csrf_exempt
-def upload(request):
+def api_upload(request):
     """ Upload firmware to firmflaws
     """
     if not request.method == 'POST':
@@ -64,7 +61,7 @@ def upload(request):
     except IntegrityError:
         return JsonResponse({"status": "repost", "hash": firmware_obj.hash})
 
-def get_firmware(request, hash):
+def api_get_firmware(request, hash):
     """ Return firmware informations
     """
     try:
@@ -110,7 +107,7 @@ def get_firmware(request, hash):
     except FirmwareModel.DoesNotExist:
         return JsonResponse({"error": "firmware not found", "hash": hash})
 
-def get_firmware_summary(request, hash):
+def api_get_firmware_summary(request, hash):
     """ Return firmware informations
     """
     try:
@@ -137,42 +134,25 @@ def get_firmware_summary(request, hash):
         return JsonResponse({"error": "firmware not found", "hash": hash})
 
 
-def get_hierarchy(request, hash):
+def api_get_hierarchy(request, hash):
     try:
         firmware = FirmwareModel.objects.get(hash=hash)
 
         files = []
         for file in firmware.files.all():
+            nb_loots = LootModel.objects.filter(file=file).count()
             files.append({"filename": file.filename,
                           "size": file.filesize,
                           "type": file.file_type,
                           "hash": file.hash,
-                          "nb_loots": file.nb_loots})
+                          "nb_loots": nb_loots})
 
-        loots = {}
-        loots_types = [_.name for _ in LootTypeModel.objects.all()]
-        for type in loots_types:
-            result = LootModel.objects.filter(type__name=type, file__firmware=firmware).count()
-            loots[type] = result
-
-        #maybe let's keep this in db?
-        mytree = parseFilesToHierarchy(files)
-        return JsonResponse({"name": firmware.name,
-                             "hash": firmware.hash,
-                             "model": firmware.model,
-                             "version": firmware.version,
-                             "status": firmware.status,
-                             "loots": loots,
-                             "hierarchy": mytree,
-                             "created_at": firmware.created_at,
-                             "filesize": firmware.filesize,
-                             "brand": firmware.brand.name,
-                             "description": firmware.description})
+        return JsonResponse({'files': files})
     except FirmwareModel.DoesNotExist:
         return JsonResponse({"error": "firmware not found", "hash": hash})
 
 
-def get_file(request, hash):
+def api_get_file(request, hash):
     """ Return file from given hash
     """
     try:
@@ -213,7 +193,7 @@ def get_file(request, hash):
 
                     content_type = "image/png"
                     response = HttpResponse(content, content_type=content_type)
-                except:
+                except NotImplementedError:
                     file.graph_file = False
                     file.save()
                     return HttpResponse("no graph")
@@ -250,7 +230,7 @@ def get_file(request, hash):
     except FileModel.DoesNotExist:
         return JsonResponse({"error": "file not found", "hash": hash})
 
-def get_latest(request):
+def api_get_latest(request):
     """ Return the 10 last firmwares
     """
     try:
@@ -269,7 +249,7 @@ def get_latest(request):
     except:
         return JsonResponse({"error": "unknown error"})
 
-def get_stats(request):
+def api_get_stats(request):
     """ Return global stats
     """
     try:
@@ -288,7 +268,7 @@ def get_stats(request):
     except:
         return JsonResponse({"error": "unknown error"})
 
-def search(request):
+def api_search(request):
     try:
         k = request.GET.get('keyword', False)
         if k is False:

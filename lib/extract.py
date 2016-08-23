@@ -1,14 +1,12 @@
 #!/usr/bin/python
 
-import os, sys
-import re
+import os
 import tarfile
-import shutil
-import subprocess
+
 from lib.extractor import Extractor as FirmadyneExtractor
 
-class Extractor():
 
+class Extractor():
     def __init__(self, workspace, input):
         self.input = input
         self.workspace = workspace

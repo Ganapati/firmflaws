@@ -1,0 +1,15 @@
+{% extends 'front/layout.html' %}
+{% load static %}
+
+{% block content %}
+<header>
+    <div class="header-content">
+        <div class="header-content-inner">
+            <h1>Firmware Uploaded</h1>
+            <p>Status : {{ upload.status }}</p>
+            <p>Hash : {{ upload.hash }}</p>
+            <a href="{% url 'get_firmware_summary' upload.hash %}" class="btn btn-primary btn-lg">View results</a>
+        </div>
+    </div>
+</header>
+{% endblock %}
