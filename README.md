@@ -10,7 +10,7 @@ Upload firmware and run static analysis (parse firmware, grep strings, search fo
 ## WEB INTERFACE
 
 ### Homepage (upload)
-![alt tag](hhttps://raw.githubusercontent.com/Ganapati/firmflaws/master/images/home.jpg)
+![alt tag](https://raw.githubusercontent.com/Ganapati/firmflaws/master/images/home.jpg)
 
 ### Firmware summary
 ![alt tag](https://raw.githubusercontent.com/Ganapati/firmflaws/master/images/firmware_summary.jpg)
