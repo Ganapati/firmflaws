@@ -16,8 +16,15 @@ Upload firmware and run static analysis (parse firmware, grep strings, search fo
 ![alt tag](https://raw.githubusercontent.com/Ganapati/firmflaws/master/images/firmware_summary.jpg)
 
 
-### File summary w/ static code source analysis
+### PHP file summary
 ![alt tag](https://raw.githubusercontent.com/Ganapati/firmflaws/master/images/file_analysis.jpg)
+
+### ELF file summary
+![alt tag](https://raw.githubusercontent.com/Ganapati/firmflaws/master/images/elf.jpg)
+
+### Picture file
+![alt tag](https://raw.githubusercontent.com/Ganapati/firmflaws/master/images/image.jpg)
+
 
 ## API
 ### POST /api/upload

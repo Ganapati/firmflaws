@@ -42,11 +42,6 @@ def upload(request):
     print(json_result)
     return render(request, 'front/upload.html', {'upload': json_result})
 
-def get_hierarchy(request, hash):
-    """ Display hierarchy page for a firmware
-    """
-    return render(request, 'front/hierarchy.html')
-
 def get_firmware_summary(request, hash):
     """ Display summary page for a firmware
     """
