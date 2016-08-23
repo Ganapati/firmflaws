@@ -64,23 +64,22 @@ class Command(BaseCommand):
                     file_obj.firmware.add(self.firmware)
                     file_obj.save()
                 except FileModel.DoesNotExist:
-                    file_obj = FileModel()
-                    file_obj.filepath = os.path.join(root, file)
-                    file_obj.hash = hash
-                    file_obj.filesize = len(content)
-                    file_obj.filename = path
-                    file_obj.save()
-                    file_obj.firmware.add(self.firmware)
                     try:
+                        file_obj = FileModel()
+                        file_obj.filepath = os.path.join(root, file)
+                        file_obj.hash = hash
+                        file_obj.filesize = len(content)
+                        file_obj.filename = path
+                        file_obj.save()
+                        file_obj.firmware.add(self.firmware)
                         file_obj.file_type = magic.from_file(os.path.join(root,
                                                                           file))
+                        file_obj.save()
+                        self.find_loots(file_obj)
+                        # Performance tweak
+                        file_obj.nb_loots = file_obj.loots.all().count()
                     except:
                         file_obj.file_type = "unknown"
-                    file_obj.save()
-                    self.find_loots(file_obj)
-
-                    # Performance tweak
-                    file_obj.nb_loots = file_obj.loots.all().count()
 
         print("Files registered")
 
