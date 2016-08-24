@@ -220,7 +220,7 @@ def api_get_file(request, hash):
                 else:
                     response["graph"] = True   
 
-        if "ASCII text" in file.file_type:
+        if "text" in file.file_type:
             content = ""
             with open(file.filepath, "r") as fd:
                 content = fd.read()
