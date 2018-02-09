@@ -54,7 +54,7 @@ class Extractor(object):
         self.database = server
 
         # Worker pool.
-        self._pool = multiprocessing.Pool() if numproc else None
+        self._pool = None #multiprocessing.Pool() if numproc else None
 
         # Set containing MD5 checksums of visited items
         self.visited = set()

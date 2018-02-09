@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'lib',
     'api',
     'front',
-    'debug_toolbar',
     'django_cleanup',
 ]
 
@@ -55,7 +54,6 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'firmflaws.settings.NonHtmlDebugToolbarMiddleware',
 ]
 
@@ -67,7 +65,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-                os.path.join('front', 'templates'),
+                 os.path.join(BASE_DIR, 'front', 'templates')
             ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -88,12 +86,8 @@ WSGI_APPLICATION = 'firmflaws.wsgi.application'
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', 
-        'NAME': 'firmflaws',
-        'USER': 'firmflaws',
-        'PASSWORD': 'firmflaws',
-        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'db.sqlite3'
     }
 }
 
@@ -143,7 +137,7 @@ class NonHtmlDebugToolbarMiddleware(object):
     @staticmethod
     def process_response(request, response):
         debug = request.GET.get('debug', 'UNSET')
-        
+
         if debug != 'UNSET':
             if response['Content-Type'] == 'application/octet-stream':
                 new_content = '<html><body>Binary Data, ' \
